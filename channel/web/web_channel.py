@@ -22,15 +22,24 @@ class WebChannel(ChatChannel):
     def chat_handler(self):
         data = request.json
         user_msg = data.get("message", "")
-        # 正確初始化 ChatMessage
-        msg_obj = ChatMessage(msg=user_msg)
-        # 動態添加插件所需的屬性
+        
+        # 模擬原始訊息並初始化 ChatMessage
+        raw_msg = {"content": user_msg}  # 根據插件需求補充其他字段
+        msg_obj = ChatMessage(_rawmsg=raw_msg)
+        
+        # 手動設置必要屬性
+        msg_obj.content = user_msg
+        msg_obj.from_user_id = "web_user_001"
         msg_obj.from_user_nickname = "Web用戶"
+        msg_obj.actual_user_id = "web_user_001"
         msg_obj.actual_user_nickname = "Web用戶"
+        msg_obj.is_group = False
+        
         # 建立 Context
         context = Context(ContextType.TEXT, content=user_msg)
         context.kwargs["msg"] = msg_obj
         context.kwargs["session_id"] = "web_user_001"
+        
         # 處理請求
         reply = self.produce(context)
         return jsonify({"reply": reply.content})
