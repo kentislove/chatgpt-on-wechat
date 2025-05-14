@@ -33,6 +33,15 @@ class WebChannel(ChatChannel):
 
     def chatui_handler(self):
         return render_template('chatui.html')
-
+    def chat_handler(self):
+        data = request.json
+    # 加入 session_id 參數（範例用固定值，正式環境需用用戶ID或隨機生成）
+        context = Context(
+            type=ContextType.TEXT,
+            content=data.get("message", ""),
+        )
+        context.kwargs["session_id"] = "web_user_001"
+        reply = self.produce(context)
+        return jsonify({"reply": reply.content})
 def create_channel():
     return WebChannel()
