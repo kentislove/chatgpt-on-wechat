@@ -115,6 +115,7 @@ class ChatGPTBot(Bot, OpenAIImage):
             return reply
 
     def reply_text(self, session: ChatGPTSession, api_key=None, args=None, retry_count=0) -> dict:
+        print("當前 OpenAI API 金鑰:", os.getenv("OPENAI_API_KEY")) 
         """
         call openai's ChatCompletion to get the answer
         :param session: a conversation session
