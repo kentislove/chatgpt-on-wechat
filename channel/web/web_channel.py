@@ -5,13 +5,11 @@ from bridge.reply import Reply, ReplyType
 from channel.chat_channel import ChatChannel
 from common.log import logger
 
-class WebChannel(ChatChannel):
+class WebChannel(ChatChannel):  # 類名必須為 WebChannel
     def __init__(self):
         super().__init__()
         self.app = Flask(__name__)
         self.port = int(os.environ.get("PORT", 10000))
-        
-        # 集中註冊所有路由
         self.app.add_url_rule('/chat', 'chat', self.chat_handler, methods=['POST'])
         self.app.add_url_rule('/', 'index', self.index_handler)
 
@@ -22,7 +20,7 @@ class WebChannel(ChatChannel):
         return jsonify({"reply": reply.content})
 
     def index_handler(self):
-        return "Hello World"
+        return "Web Service Running"
 
     def startup(self):
         logger.info(f"Starting web service on 0.0.0.0:{self.port}")
@@ -30,4 +28,3 @@ class WebChannel(ChatChannel):
 
 def create_channel():
     return WebChannel()
-
