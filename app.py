@@ -1,19 +1,19 @@
 # app.py
+
 # encoding:utf-8
+
 import os
 import signal
 import sys
 import time
 import threading
 import logging
-from importlib import import_module
+from channel.channel_factory import create_channel
 
-# 修復模組導入路徑
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common import const
 from config import load_config, conf
 from plugins import PluginManager
-from channel.channel_factory import create_channel  # 新增這行
 
 logger = logging.getLogger(__name__)
 
@@ -29,22 +29,23 @@ def sigterm_handler_wrap(_signo):
 
 def start_channel(channel_name: str):
     try:
-        # 使用 channel_factory 創建實例 ✅
         channel = create_channel(channel_name)
     except Exception as e:
         logger.error(f"Channel {channel_name} init failed: {e}")
         return
 
-    if channel_name in ["wx", "wxy", "terminal", "wechatmp", "web", 
-                       "wechatmp_service", "wechatcom_app", "wework",
-                       const.FEISHU, const.DINGTALK]:
+    if channel_name in [
+        "wx", "wxy", "terminal", "wechatmp", "web",
+        "wechatmp_service", "wechatcom_app", "wework",
+        const.FEISHU, const.DINGTALK
+    ]:
         PluginManager().load_plugins()
 
     if conf().get("use_linkai"):
         try:
             from common import linkai_client
             threading.Thread(
-                target=linkai_client.start, 
+                target=linkai_client.start,
                 args=(channel,),
                 daemon=True
             ).start()
@@ -59,7 +60,6 @@ def run():
         sigterm_handler_wrap(signal.SIGINT)
         sigterm_handler_wrap(signal.SIGTERM)
 
-        # 初始化日誌
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
