@@ -9,8 +9,9 @@ class WebChannel(ChatChannel):
     def __init__(self):
         super().__init__()
         self.app = Flask(__name__)
-        self.port = int(os.environ.get("PORT", 10000))  # 讀取 Render 的 PORT
-        self.app.add_url_rule('/chat', 'chat', self.chat_handler, methods=['POST'])
+        self.port = int(os.environ.get("PORT", 10000))
+        self.app.run(host="0.0.0.0", port=self.port)
+
 
     def chat_handler(self):
         data = request.json
