@@ -1,14 +1,10 @@
-# channel/chat_channel.py
-
 import os
 import time
-import threading
 from concurrent.futures import ThreadPoolExecutor
 from bridge.context import Context, ContextType
 from bridge.reply import Reply, ReplyType
 from common import memory
 from common.log import logger
-from common.singleton import singleton
 from config import conf
 from plugins import PluginManager
 from channel.channel import Channel
@@ -17,7 +13,6 @@ from common import utils
 from common.tmp_dir import TmpDir
 from common.audio_convert import any_to_wav
 
-@singleton
 class ChatChannel(Channel):
     def __init__(self):
         super().__init__()
@@ -52,10 +47,10 @@ class ChatChannel(Channel):
                 )
             )
             reply = e_context["reply"]
-            
+
             if not e_context.is_pass():
                 logger.debug(f"Handling context: type={context.type}, content={context.content}")
-                
+
                 if context.type in [ContextType.TEXT, ContextType.IMAGE_CREATE]:
                     reply = self._handle_text(context)
                 elif context.type == ContextType.VOICE:
@@ -114,9 +109,9 @@ class ChatChannel(Channel):
 
     def produce(self, context: Context) -> Reply:
         try:
-            future = self.pool.submit(self._handle, context)
-            future.result(timeout=conf().get("response_timeout", 60))
-            return context.get("reply") if context.get("reply") else Reply(ReplyType.TEXT, "請求超時")
+            # 直接同步呼叫 _generate_reply，避免 async 問題
+            reply = self._generate_reply(context)
+            return reply if reply else Reply(ReplyType.TEXT, "請求超時")
         except Exception as e:
             logger.error("Error in produce", exc_info=True)
             return Reply(ReplyType.TEXT, f"請求處理失敗: {str(e)}")
@@ -125,7 +120,6 @@ class ChatChannel(Channel):
         if not reply:
             logger.warning("Attempting to send empty reply")
             reply = Reply(ReplyType.TEXT, "空回覆")
-            
         if reply.type == ReplyType.TEXT:
             logger.info(f"[CHAT] Reply content: {reply.content}")
         # 其他類型回覆處理邏輯...
