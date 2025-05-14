@@ -1,7 +1,7 @@
 {
   "channel_type": "web",
   "model": "gpt-3.5-turbo",
-  "open_ai_api_key": "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",
+  "open_ai_api_key": "",
   "proxy": "",
   "single_chat_prefix": ["bot", "@bot"],
   "group_chat_prefix": ["@bot"],
