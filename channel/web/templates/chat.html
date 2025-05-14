@@ -1,56 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>AI 聊天機器人</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f5f5f5; }
-        #chatbox { width: 400px; margin: 50px auto; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 0 10px #ccc; }
-        #messages { height: 300px; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 10px; background: #fafafa; }
-        .user { color: #007bff; margin-bottom: 5px; }
-        .bot { color: #28a745; margin-bottom: 10px; }
-        #input { width: 80%; padding: 8px; }
-        #send { width: 18%; padding: 8px; }
-    </style>
+    <title>Chat</title>
 </head>
 <body>
-    <div id="chatbox">
-        <h2>AI 聊天機器人</h2>
-        <div id="messages"></div>
-        <input type="text" id="input" placeholder="請輸入訊息..." autocomplete="off"/>
-        <button id="send">發送</button>
-    </div>
-    <script>
-        const messages = document.getElementById('messages');
-        const input = document.getElementById('input');
-        const send = document.getElementById('send');
-
-        function appendMessage(text, sender) {
-            const div = document.createElement('div');
-            div.className = sender;
-            div.textContent = (sender === 'user' ? '你：' : '機器人：') + text;
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        send.onclick = async function() {
-            const text = input.value.trim();
-            if (!text) return;
-            appendMessage(text, 'user');
-            input.value = '';
-            // 發送到 /chat API
-            const res = await fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text })
-            });
-            const data = await res.json();
-            appendMessage(data.reply, 'bot');
-        };
-
-        input.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') send.onclick();
-        });
-    </script>
+    <h1>Welcome to Chat</h1>
 </body>
 </html>
