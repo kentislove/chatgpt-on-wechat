@@ -39,8 +39,8 @@ class WebChannel(ChatChannel):
         context = Context(
             type=ContextType.TEXT,
             content=data.get("message", ""),
-            session_id="web_user_001"  # 加入 session_id 參數
         )
+        context.kwargs["session_id"] = "web_user_001"
         reply = self.produce(context)
         return jsonify({"reply": reply.content})
 def create_channel():
