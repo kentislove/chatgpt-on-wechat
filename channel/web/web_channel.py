@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, render_template
 from bridge.context import Context, ContextType
 from bridge.reply import Reply, ReplyType
 from channel.chat_channel import ChatChannel
+from channel.chat_message import ChatMessage  # 確保有這個類別
 from common.log import logger
 import os
 
@@ -20,7 +21,13 @@ class WebChannel(ChatChannel):
 
     def chat_handler(self):
         data = request.json
-        context = Context(ContextType.TEXT, content=data.get("message", ""))
+        user_msg = data.get("message", "")
+        # 建立 ChatMessage 物件，根據你的框架需求
+        msg_obj = ChatMessage(content=user_msg)
+        # 建立 Context，並補上 msg 與 session_id
+        context = Context(ContextType.TEXT, content=user_msg)
+        context.kwargs["msg"] = msg_obj
+        context.kwargs["session_id"] = "web_user_001"
         reply = self.produce(context)
         return jsonify({"reply": reply.content})
 
@@ -33,15 +40,6 @@ class WebChannel(ChatChannel):
 
     def chatui_handler(self):
         return render_template('chatui.html')
-    def chat_handler(self):
-        data = request.json
-    # 加入 session_id 參數（範例用固定值，正式環境需用用戶ID或隨機生成）
-        context = Context(
-            type=ContextType.TEXT,
-            content=data.get("message", ""),
-        )
-        context.kwargs["session_id"] = "web_user_001"
-        reply = self.produce(context)
-        return jsonify({"reply": reply.content})
+
 def create_channel():
     return WebChannel()
