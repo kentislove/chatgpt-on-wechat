@@ -1,5 +1,5 @@
 {
-    "channel_type": "wcf",
+    "channel_type": "web",
     "godcmd": {
         "password": "",
         "admin_users": []
