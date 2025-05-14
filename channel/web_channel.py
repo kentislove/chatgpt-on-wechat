@@ -1,3 +1,4 @@
+# channel/web/web_channel.py
 from flask import Flask, request, jsonify
 import os
 from bridge.context import Context, ContextType
@@ -10,8 +11,6 @@ class WebChannel(ChatChannel):
         super().__init__()
         self.app = Flask(__name__)
         self.port = int(os.environ.get("PORT", 10000))
-        
-        # 集中註冊所有路由
         self.app.add_url_rule('/chat', 'chat', self.chat_handler, methods=['POST'])
         self.app.add_url_rule('/', 'index', self.index_handler)
 
@@ -22,7 +21,7 @@ class WebChannel(ChatChannel):
         return jsonify({"reply": reply.content})
 
     def index_handler(self):
-        return "Hello World"
+        return "Web Service Running"
 
     def startup(self):
         logger.info(f"Starting web service on 0.0.0.0:{self.port}")
@@ -30,4 +29,3 @@ class WebChannel(ChatChannel):
 
 def create_channel():
     return WebChannel()
-
