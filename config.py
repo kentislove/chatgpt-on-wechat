@@ -276,7 +276,7 @@ def load_config():
     print(f"[DEBUG] OpenAI API Key (config): {conf().get('open_ai_api_key')}")
     config_str = read_file(config_path)
     logger.debug("[INIT] config str: {}".format(drag_sensitive(config_str)))
-
+    config["open_ai_api_key"] = os.getenv("OPENAI_API_KEY") or config.get("open_ai_api_key", "")
     # 将json字符串反序列化为dict类型
     config = Config(json.loads(config_str))
 
