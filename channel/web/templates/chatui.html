@@ -1,10 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chat UI</title>
+    <meta charset="UTF-8">
+    <title>Chat Interface</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        #chat-box { width: 400px; margin: 40px auto; background: #fff; border-radius: 8px; box-shadow: 0 0 10px #ccc; padding: 20px; }
+        .message { margin: 10px 0; }
+        .user { color: #007bff; font-weight: bold; }
+        .bot { color: #28a745; font-weight: bold; }
+        .bubble { display: inline-block; padding: 10px 16px; border-radius: 16px; margin-top: 2px; }
+        .bubble.user { background: #e3f0ff; }
+        .bubble.bot { background: #eafbe7; }
+        #chat-form { display: flex; margin-top: 15px; }
+        #chat-input { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ccc; }
+        #send-btn { padding: 8px 16px; border: none; background: #007bff; color: #fff; border-radius: 8px; margin-left: 8px; cursor: pointer; }
+        #send-btn:disabled { background: #aaa; }
+    </style>
 </head>
 <body>
-    <h1>Chat Interface</h1>
-    <div id="chat-messages"></div>
+    <div id="chat-box">
+        <div id="messages"></div>
+        <form id="chat-form">
+            <input type="text" id="chat-input" autocomplete="off" placeholder="Type your message..." required />
+            <button type="submit" id="send-btn">Send</button>
+        </form>
+    </div>
+    <script>
+        const form = document.getElementById('chat-form');
+        const input = document.getElementById('chat-input');
+        const messagesDiv = document.getElementById('messages');
+        const sendBtn = document.getElementById('send-btn');
+
+        function addMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message';
+            msgDiv.innerHTML = `<span class="${sender}">${sender === 'user' ? '你' : 'AI'}</span>: <span class="bubble ${sender}">${text}</span>`;
+            messagesDiv.appendChild(msgDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const userMsg = input.value.trim();
+            if (!userMsg) return;
+            addMessage('user', userMsg);
+            input.value = '';
+            sendBtn.disabled = true;
+
+            try {
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMsg })
+                });
+                const data = await res.json();
+                addMessage('bot', data.reply);
+            } catch (err) {
+                addMessage('bot', '主機無回應，請稍後再試。');
+            } finally {
+                sendBtn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
