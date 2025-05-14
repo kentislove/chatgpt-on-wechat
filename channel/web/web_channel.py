@@ -1,5 +1,3 @@
-# channel/web/web_channel.py
-
 from flask import Flask, request, jsonify, render_template
 from bridge.context import Context, ContextType
 from bridge.reply import Reply, ReplyType
@@ -11,7 +9,6 @@ import os
 class WebChannel(ChatChannel):
     def __init__(self):
         super().__init__()
-        # 用絕對路徑指定模板目錄
         template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
         self.app = Flask(__name__, template_folder=template_dir)
         self.port = int(os.environ.get("PORT", 10000))
@@ -22,7 +19,6 @@ class WebChannel(ChatChannel):
     def chat_handler(self):
         data = request.json
         user_msg = data.get("message", "")
-
         try:
             # 模擬原始訊息並初始化 ChatMessage
             raw_msg = {"content": user_msg}
