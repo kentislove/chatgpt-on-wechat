@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, render_template
 from bridge.context import Context, ContextType
 from bridge.reply import Reply, ReplyType
 from channel.chat_channel import ChatChannel
-from channel.chat_message import ChatMessage  # 確保有這個類別
+from channel.chat_message import ChatMessage
 from common.log import logger
 import os
 
@@ -22,12 +22,16 @@ class WebChannel(ChatChannel):
     def chat_handler(self):
         data = request.json
         user_msg = data.get("message", "")
-        # 建立 ChatMessage 物件，根據你的框架需求
-        msg_obj = ChatMessage(content=user_msg)
-        # 建立 Context，並補上 msg 與 session_id
+        # 正確初始化 ChatMessage
+        msg_obj = ChatMessage(msg=user_msg)
+        # 動態添加插件所需的屬性
+        msg_obj.from_user_nickname = "Web用戶"
+        msg_obj.actual_user_nickname = "Web用戶"
+        # 建立 Context
         context = Context(ContextType.TEXT, content=user_msg)
         context.kwargs["msg"] = msg_obj
         context.kwargs["session_id"] = "web_user_001"
+        # 處理請求
         reply = self.produce(context)
         return jsonify({"reply": reply.content})
 
