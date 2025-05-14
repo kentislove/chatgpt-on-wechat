@@ -32,6 +32,7 @@ class ChatGPTBot(Bot, OpenAIImage):
             self.tb4chatgpt = TokenBucket(conf().get("rate_limit_chatgpt", 20))
         conf_model = conf().get("model") or "gpt-3.5-turbo"
         self.sessions = SessionManager(ChatGPTSession, model=conf().get("model") or "gpt-3.5-turbo")
+        print(f"[DEBUG] OpenAI API Key (runtime): {openai.api_key}")
         # o1相关模型不支持system prompt，暂时用文心模型的session
 
         self.args = {
