@@ -9,4 +9,6 @@ pre-commit
 web.py
 linkai>=0.0.6.0
 Flask>=2.0.0
+requests
+
 
