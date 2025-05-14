@@ -1,3 +1,5 @@
+# channel/web/web_channel.py
+
 from flask import Flask, request, jsonify
 import os
 from bridge.context import Context, ContextType
@@ -5,7 +7,7 @@ from bridge.reply import Reply, ReplyType
 from channel.chat_channel import ChatChannel
 from common.log import logger
 
-class WebChannel(ChatChannel):  # 類名必須為 WebChannel
+class WebChannel(ChatChannel):
     def __init__(self):
         super().__init__()
         self.app = Flask(__name__)
