@@ -6,7 +6,5 @@
   "single_chat_prefix": ["bot", "@bot"],
   "group_chat_prefix": ["@bot"],
   "group_name_white_list": ["测试群"],
-  "temperature": 0.7,
-  "use_linkai": false,
-  "character_desc": "你是一个智能助手"
+  "temperature": 0.7
 }
