@@ -25,8 +25,8 @@ def create_channel(channel_type) -> Channel:
         from channel.terminal.terminal_channel import TerminalChannel
         ch = TerminalChannel()
     elif channel_type == 'web':
-        from channel.web.web_channel import WebChannel
-        ch = WebChannel()
+        from channel.web.web_channel import WebChannel  # ✅ 正確導入
+        return WebChannel()
     elif channel_type == "wechatmp":
         from channel.wechatmp.wechatmp_channel import WechatMPChannel
         ch = WechatMPChannel(passive_reply=True)
