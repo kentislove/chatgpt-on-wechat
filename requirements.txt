@@ -9,6 +9,7 @@ web.py
 linkai>=0.0.6.0
 Flask>=2.0.0
 requests
-openai>=1.0.0
+openai==0.28.0
+
 
 
