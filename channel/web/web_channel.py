@@ -23,26 +23,37 @@ class WebChannel(ChatChannel):
         data = request.json
         user_msg = data.get("message", "")
         
-        # 模擬原始訊息並初始化 ChatMessage
-        raw_msg = {"content": user_msg}  # 根據插件需求補充其他字段
-        msg_obj = ChatMessage(_rawmsg=raw_msg)
-        
-        # 手動設置必要屬性
-        msg_obj.content = user_msg
-        msg_obj.from_user_id = "web_user_001"
-        msg_obj.from_user_nickname = "Web用戶"
-        msg_obj.actual_user_id = "web_user_001"
-        msg_obj.actual_user_nickname = "Web用戶"
-        msg_obj.is_group = False
-        
-        # 建立 Context
-        context = Context(ContextType.TEXT, content=user_msg)
-        context.kwargs["msg"] = msg_obj
-        context.kwargs["session_id"] = "web_user_001"
-        
-        # 處理請求
-        reply = self.produce(context)
-        return jsonify({"reply": reply.content})
+        try:
+            # 模擬原始訊息並初始化 ChatMessage
+            raw_msg = {"content": user_msg}
+            msg_obj = ChatMessage(raw_msg)
+            
+            # 手動設置必要屬性
+            msg_obj.content = user_msg
+            msg_obj.from_user_id = "web_user_001"
+            msg_obj.from_user_nickname = "Web用戶"
+            msg_obj.actual_user_id = "web_user_001"
+            msg_obj.actual_user_nickname = "Web用戶"
+            msg_obj.is_group = False
+            
+            # 建立 Context
+            context = Context(ContextType.TEXT, content=user_msg)
+            context.kwargs["msg"] = msg_obj
+            context.kwargs["session_id"] = "web_user_001"
+            
+            # 處理請求
+            reply = self.produce(context)
+            
+            # 檢查回覆有效性
+            if not reply or not hasattr(reply, 'content'):
+                logger.error("主機回傳空值，可能 OpenAI 處理失敗")
+                return jsonify({"reply": "系統繁忙，請稍後再試"}), 500
+                
+            return jsonify({"reply": reply.content})
+            
+        except Exception as e:
+            logger.error(f"處理請求時發生錯誤: {str(e)}", exc_info=True)
+            return jsonify({"reply": f"系統錯誤: {str(e)}"}), 500
 
     def index_handler(self):
         return render_template('chat.html')
