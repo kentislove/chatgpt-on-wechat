@@ -63,7 +63,7 @@ def start_channel(channel_name: str):
             response = channel.handle(data)
             return jsonify(response)
 
-        port = int(os.environ.get("PORT", 8080))
+        port = int(os.environ.get("PORT", 10000))
         threading.Thread(
             target=app.run,
             kwargs={'host': '0.0.0.0', 'port': port},
