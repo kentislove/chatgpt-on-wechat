@@ -29,8 +29,8 @@ class WebChannel(ChatChannel):
         logger.info(f"Starting web service on 0.0.0.0:{self.port}")
         self.app.run(host="0.0.0.0", port=self.port)
 
-def chatui_handler(self):
-    return render_template('chatui.html')
+    def chatui_handler(self):
+        return render_template('chatui.html')
 
 def create_channel():
     return WebChannel()
